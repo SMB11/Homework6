@@ -109,14 +109,11 @@ ctx.stroke();
   player()
   let Win = false;
   let First = false;
-  canvas.addEventListener('click', function(evt) {
-    if(board[Math.floor(evt.offsetY/(canvas.width / 3))][Math.floor(evt.offsetX/(canvas.width / 3))] = ' ') {
-
-      board[Math.floor(evt.offsetY/(canvas.width / 3))][Math.floor(evt.offsetX/(canvas.width / 3))] = 'x';
-
-      drawX(Math.floor(evt.offsetX/(canvas.width / 3)) * (canvas.width / 3), 
-
-        Math.floor(evt.offsetY/(canvas.width / 3)) * (canvas.width / 3));
+  canvas.addEventListener('mousedown', function(e) {
+    if(board[Math.floor(e.offsetY/(canvas.width / 3))][Math.floor(e.offsetX/(canvas.width / 3))] === ' ') {
+      board[Math.floor(e.offsetY/(canvas.width / 3))][Math.floor(e.offsetX/(canvas.width / 3))] = 'x';
+      drawX(Math.floor(e.offsetX/(canvas.width / 3)) * (canvas.width / 3), 
+        Math.floor(e.offsetY/(canvas.width / 3)) * (canvas.width / 3));
       First = false;
       isPlayer = false;
     }
@@ -126,8 +123,8 @@ ctx.stroke();
           board[i][j] = ' ';
         }
       }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      background();
+      canvas.clearRect(0, 0, canvas.width, canvas.height);
+      drawLines();
       Win = false;
       isPlayer = !isPlayer;
       player();
@@ -137,5 +134,16 @@ ctx.stroke();
       Win = true;
     }
   });
-  
-  
+  canvas.addEventListener('mouseup', function(e) {
+    if(!First && !Win && !isPlayer) {
+      isPlayer = true;
+      const computer = nextMove(board);
+      if(makeMove(board, computer) === 0) {
+        makeMove(board, computer);
+        drawO(computer[1] * (canvas.width / 3), computer[0] * (canvas.width / 3));
+      }
+      if(findWinner(board)) {
+        Win = true;
+      }
+    }
+  });
